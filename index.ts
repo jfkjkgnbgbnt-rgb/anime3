@@ -1,18 +1,25 @@
-import { Router, type IRouter } from "express";
-import healthRouter from "./health";
-import authRouter from "./auth";
-import mediaRouter from "./media";
-import proxyRouter from "./proxy";
-import scraperRouter from "./scraper";
+import app from "./app";
+import { logger } from "./lib/logger";
 
-const router: IRouter = Router();
+const rawPort = process.env["PORT"];
 
-router.use(healthRouter);
-router.use(authRouter);
-// scraper + proxy must be before mediaRouter so /media/scrape and /media/proxy
-// aren't swallowed by the /media/:id catch-all
-router.use(scraperRouter);
-router.use(proxyRouter);
-router.use(mediaRouter);
+if (!rawPort) {
+  throw new Error(
+    "PORT environment variable is required but was not provided.",
+  );
+}
 
-export default router;
+const port = Number(rawPort);
+
+if (Number.isNaN(port) || port <= 0) {
+  throw new Error(`Invalid PORT value: "${rawPort}"`);
+}
+
+app.listen(port, (err) => {
+  if (err) {
+    logger.error({ err }, "Error listening on port");
+    process.exit(1);
+  }
+
+  logger.info({ port }, "Server listening");
+});
