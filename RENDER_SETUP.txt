@@ -1,0 +1,26 @@
+=== RENDER SETUP INSTRUCTIONS ===
+
+1. Create a new "Web Service" on Render
+2. Connect your GitHub repo (push this folder to GitHub first)
+3. Set these values:
+
+   Environment:     Node
+   Build Command:   npm install && npm run build && node --enable-source-maps dist/index.mjs run src/migrate.ts
+   Start Command:   node --enable-source-maps ./dist/index.mjs
+
+   Actually use:
+   Build Command:   npm install && node build.mjs
+   Start Command:   node --enable-source-maps ./dist/index.mjs
+
+4. Add these Environment Variables in Render dashboard:
+   DATABASE_URL    = (your PostgreSQL connection string)
+   PORT            = 8080
+   NODE_ENV        = production
+   ADMIN_PASSWORD  = (choose a strong password)
+   SESSION_SECRET  = (choose a random string)
+
+5. If you need to create the DB table, run this once:
+   node --input-type=module < src/migrate.ts
+   (or run it as a one-off job on Render)
+
+=== THAT'S IT ===
